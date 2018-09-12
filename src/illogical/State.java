@@ -1,5 +1,7 @@
+package illogical;
+
 /**
- * ClassName:State <br/>
+ * ClassName:illogical.State <br/>
  * Function:request状态. <br/>
  * Reason:request状态. <br/>
  * Date:2017/9/12 8:34 <br/>

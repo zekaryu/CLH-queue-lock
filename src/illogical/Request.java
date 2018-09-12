@@ -1,5 +1,7 @@
+package illogical;
+
 /**
- * ClassName:Request <br/>
+ * ClassName:illogical.Request <br/>
  * Function:对锁的请求. <br/>
  * Reason:对锁的请求. <br/>
  * Date:2017/9/11 16:55 <br/>
@@ -41,4 +43,5 @@ public class Request {
   public void setMyProcess(Process myProcess) {
     this.myProcess = myProcess;
   }
+  
 }

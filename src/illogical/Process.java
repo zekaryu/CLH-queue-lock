@@ -1,5 +1,7 @@
+package illogical;
+
 /**
- * ClassName:Process <br/>
+ * ClassName:illogical.Process <br/>
  * Function:请求锁的线程. <br/>
  * Reason:请求锁的线程. <br/>
  * Date:2017/9/11 17:01 <br/>
@@ -18,13 +20,13 @@ public class Process implements Runnable {
    *
    * @since JDK 1.8
    */
-  private ThreadLocal<Request> watch;
+  private Request watch;
   /**
    * myreq: 当且仅当当前线程释放锁后更新为GRANTED状态，否则为PENDING状态.
    *
    * @since JDK 1.8
    */
-  private ThreadLocal<Request> myreq;
+  private Request myreq;
   /**
    * name: 当前线程名，方便观察，request对象与线程的对应关系.
    *
@@ -37,37 +39,29 @@ public class Process implements Runnable {
     this.name = name;
     Process myProcess = this;
     //初始化myreq对象，状态为PENDING，对应的线程为当前的myProcess
-    this.myreq = new ThreadLocal<Request>() {
-      @Override
-      protected Request initialValue() {
-        return new Request(State.PENDING, myProcess);
-      }
-    };
-    //watch 初始化为null，加入到队列之后，会指向前驱process的myreq
-    this.watch = new ThreadLocal<Request>();
+    this.myreq = new Request(State.PENDING, myProcess);
   }
 
   /**
    * lock:请求锁. <br/>
    */
   private void lock() {
-    myreq.get().setState(State.PENDING);
-    Request tmp = clh.getLock().getTail().getAndSet(myreq.get());
-    watch.set(tmp);
+    myreq.setState(State.PENDING);
+    watch = clh.getLock().getTail().getAndSet(myreq);
     boolean flag = true;
-    while (watch.get().getState() == State.PENDING) {
+    while (watch.getState() == State.PENDING) {
       try {
-        if (watch.get().getMyProcess() != null) {
+        if (watch.getMyProcess() != null) {
           if (flag) {
-            System.out.println("   " + name + "    | is waiting for " + watch.get().getMyProcess().name
-                    + " | " + myreq.get().getState() + " | " + watch.get().getState() + " |    " +
+            System.out.println("   " + name + "    | is waiting for " + watch.getMyProcess().name
+                    + " | " + myreq.getState() + " | " + watch.getState() + " |    " +
                     "added to queue    | ");
           } else {
-            System.out.println("   " + name + "    | is waiting for " + watch.get().getMyProcess().name
-                    + " | " + myreq.get().getState() + " | " + watch.get().getState() + " |      " +
+            System.out.println("   " + name + "    | is waiting for " + watch.getMyProcess().name
+                    + " | " + myreq.getState() + " | " + watch.getState() + " |      " +
                     "                |");
           }
-          if (clh.getLock().getTail().get().equals(myreq.get())) {
+          if (clh.getLock().getTail().get().equals(myreq)) {
             System.out.println("— — — — — — — — — — — — — — — — — — — — — — — — |");
           }
         }
@@ -78,13 +72,13 @@ public class Process implements Runnable {
       flag = false;
     }
     if (flag) {
-      System.out.println("   " + name + "    |      get lock     | " + myreq.get().getState() +
-              " | " + watch.get().getState() + " |    added to queue    | ");
+      System.out.println("   " + name + "    |      get lock     | " + myreq.getState() +
+              " | " + watch.getState() + " |    added to queue    | ");
     } else {
-      System.out.println("   " + name + "    |      get lock     | " + myreq.get().getState() +
-              " | " + watch.get().getState() + " |                      |");
+      System.out.println("   " + name + "    |      get lock     | " + myreq.getState() +
+              " | " + watch.getState() + " |                      |");
     }
-    if (clh.getLock().getTail().get().equals(myreq.get())) {
+    if (clh.getLock().getTail().get().equals(myreq)) {
       System.out.println("— — — — — — — — — — — — — — — — — — — — — — — — |");
     }
   }
@@ -93,10 +87,10 @@ public class Process implements Runnable {
    * unlock:释放锁. <br/>
    */
   private void unlock() {
-    myreq.get().setState(State.GRANTED);
-    System.out.println("   " + name + "    |   release lock    | " + myreq.get().getState() +
+    myreq.setState(State.GRANTED);
+    System.out.println("   " + name + "    |   release lock    | " + myreq.getState() +
             " |    X    |   remove from queue  |");
-    if (clh.getLock().getTail().get().equals(myreq.get())) {
+    if (clh.getLock().getTail().get().equals(myreq)) {
       System.out.println("— — — — — — — — — — — — — — — — — — — — — — — — |");
     }
 //    myreq.set(watch.get());
@@ -114,9 +108,9 @@ public class Process implements Runnable {
     }
     //释放锁
     unlock();
-    lock();
-    //线程结束之前，remove threadlocal 对象（！！！好习惯）
-    myreq.remove();
-    watch.remove();
+  }
+
+  public void setWatch(Request watch) {
+    this.watch = watch;
   }
 }

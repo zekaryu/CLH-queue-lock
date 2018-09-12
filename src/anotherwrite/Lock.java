@@ -3,7 +3,7 @@ package anotherwrite;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * ClassName:Lock <br/>
+ * ClassName:illogical.Lock <br/>
  * Function:CLH队列锁的Lock对象. <br/>
  * Reason:CLH队列锁的Lock对象. <br/>
  * Date:2017/9/11 16:55 <br/>

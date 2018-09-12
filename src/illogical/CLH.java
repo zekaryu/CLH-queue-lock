@@ -1,7 +1,9 @@
+package illogical;
+
 /**
- * ClassName:CLH <br/>
- * Function:CLH 队列锁. <br/>
- * Reason:CLH 队列锁. <br/>
+ * ClassName:illogical.CLH <br/>
+ * Function:illogical.CLH 队列锁. <br/>
+ * Reason:illogical.CLH 队列锁. <br/>
  * Date:2017/9/11 16:59 <br/>
  * 
  * @since JDK 1.8
@@ -39,7 +41,6 @@ public class CLH {
     new Thread(process2).start();
     Thread.sleep(100);
     new Thread(process3).start();
-
   }
 }
 
