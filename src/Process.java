@@ -99,7 +99,7 @@ public class Process implements Runnable {
     if (clh.getLock().getTail().get().equals(myreq.get())) {
       System.out.println("— — — — — — — — — — — — — — — — — — — — — — — — |");
     }
-    myreq.set(watch.get());
+//    myreq.set(watch.get());
   }
 
   @Override
@@ -114,6 +114,7 @@ public class Process implements Runnable {
     }
     //释放锁
     unlock();
+    lock();
     //线程结束之前，remove threadlocal 对象（！！！好习惯）
     myreq.remove();
     watch.remove();
